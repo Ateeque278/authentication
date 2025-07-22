@@ -7,30 +7,24 @@ import 'package:get/get.dart';
 class LoginScreenController extends GetxController {
   
   RxBool isLoading = false.obs;
-  
-  Future<void> registerUser(String email, String password,context) async {
-    
+
+  Future<void> registerUser(String email, String password, BuildContext context) async {
     isLoading.value = true;
 
-    final url = Uri.parse('https://woo-dev-1.6hexa.com/wp-json/wcoauth/v1/register');
-
-    var body = {'email': email, 'password': password};
+    final url = 'https://woo-dev-1.6hexa.com/wp-json/wcoauth/v1/register';
+    final body = {'email': email, 'password': password};
 
     try {
-      final response = await ApiProvider().post(url, body, false, Get.context);
+      final response = await ApiProvider().post(url, body, false, context);
 
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200 && data['success'] == true) {
-
-        print("message ${data['message']}");
-
+      // `response` is already a parsed Map or dynamic object
+      if (response['success'] == true) {
+        print("message: ${response['message']}");
       } else {
-        final message = data['message'] ?? 'Registration failed';
+        final message = response['message'] ?? 'Registration failed';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
         );
-        print("message ${message}");
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
