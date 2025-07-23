@@ -1,4 +1,5 @@
 import 'package:authentication/login_screen_controller.dart';
+import 'package:authentication/testing.dart';
 import 'package:authentication/testing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(onPressed: (){
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ExceptionTestPage()),
+                MaterialPageRoute(builder: (_) => Testing()),
               );
 
             }, child: Text("Test")),

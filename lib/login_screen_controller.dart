@@ -53,9 +53,8 @@ class AuthController extends GetxController {
         SnackBar(content: Text(response.message ?? (response.success ? 'Login successful' : 'Login failed'))),
       );
 
-      if (response.success && response.accessToken != null) {
-        print("Token: ${response.accessToken}");
-        print("User: ${response.user?.profile?.name}");
+      if (response.success && response.jwtToken != null) {
+        print("Token: ${response.jwtToken}");
         // You could store token, user info etc. here
       }
     } on AppException catch (e) {

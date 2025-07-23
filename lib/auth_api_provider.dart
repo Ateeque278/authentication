@@ -13,7 +13,7 @@ class AuthApiProvider extends ApiBaseClass {
       print("📲 [Provider] Register user called");
 
       final response = await _api.post(
-        '${_baseUrl}/register',
+        '${_baseUrl}/email-register',
          {
           'email': email,
           'password': password,
@@ -24,7 +24,7 @@ class AuthApiProvider extends ApiBaseClass {
       print("reponsee in provider try $response");
 
 
-      return RegisterResponse.fromJson(response.data);
+      return RegisterResponse.fromJson(response);
     } catch (e) {
       print("reponsee in provider catch $e");
       // Optional: map DioError to a custom error or rethrow
@@ -36,7 +36,7 @@ class AuthApiProvider extends ApiBaseClass {
   Future<LoginResponse> loginUser(String email, String password) async {
     try {
       final response = await _api.post(
-        '$_baseUrl/login',
+        '$_baseUrl/email-verify',
         {
           'email': email,
           'password': password,

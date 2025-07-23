@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -126,7 +127,7 @@ class ApiBaseClass {
 
     switch (response.statusCode) {
       case 200:
-        return response.data;
+        return jsonDecode(response.data);
       case 400:
         throw BadRequestException(response.data.toString());
       case 401:
