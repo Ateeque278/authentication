@@ -1,39 +1,73 @@
-import 'dart:convert';
-
-import 'package:authentication/api_base_class.dart';
+import 'package:authentication/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'api_base_class.dart';
+import 'auth_api_provider.dart';
+import 'login_model.dart';
 
-class LoginScreenController extends GetxController {
-  
-  RxBool isLoading = false.obs;
+class AuthController extends GetxController {
+  var isLoading = false.obs;
+  final AuthApiProvider _authApi = AuthApiProvider();
 
   Future<void> registerUser(String email, String password, BuildContext context) async {
     isLoading.value = true;
 
-    final url = 'https://woo-dev-1.6hexa.com/wp-json/wcoauth/v1/register';
-    final body = {'email': email, 'password': password};
-
     try {
-      final response = await ApiProvider().post(url, body, false, context);
+      print("📲 [Controller] Register user called");
 
-      // `response` is already a parsed Map or dynamic object
-      if (response['success'] == true) {
-        print("message: ${response['message']}");
-      } else {
-        final message = response['message'] ?? 'Registration failed';
+      RegisterResponse response = await _authApi.registerUser(email, password);
+
+      print("reponsee in controller try $response");
+
+      if (response.success == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+          SnackBar(content: Text(response.message ?? 'Registration successful')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.message ?? 'Registration failed')),
         );
       }
-    } catch (e) {
+    } on AppException catch (e) {
+      print("reponsee in controller catch $e");
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text("Error: $e")),
       );
+      print('Error Code: ${e.code}');
+      print('Details: ${e.details}');
+
     } finally {
       isLoading.value = false;
     }
   }
 
+
+  Future<void> loginUser(String email, String password, BuildContext context) async {
+    isLoading.value = true;
+
+    try {
+      LoginResponse response = await _authApi.loginUser(email, password);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.message ?? (response.success ? 'Login successful' : 'Login failed'))),
+      );
+
+      if (response.success && response.accessToken != null) {
+        print("Token: ${response.accessToken}");
+        print("User: ${response.user?.profile?.name}");
+        // You could store token, user info etc. here
+      }
+    } on AppException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login Error: $e")),
+      );
+      print('Error Code: ${e.code}');
+      print('Details: ${e.details}');
+
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
 }
